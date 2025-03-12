@@ -1,0 +1,215 @@
+/* 
+    Default settings for consistent spacing and layout for 
+    different browsers
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif
+}
+
+/* 
+    Centers page with flex,
+    Align content horizontally with justify-content
+    Align content vertically with align-items
+    Body will be 100% of the viewport height with min-height,
+    Dark gray backgrond color
+*/
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #222222;
+}
+
+/* 
+    Center text inside login form with text-align,
+    Fixed height and weight,
+    Padding adds internal spacing
+*/
+.login-form {
+    position: relative;
+    text-align: center;
+    width: 440px;
+    height: 480px;
+    padding: 30px;
+}
+
+/* 
+    Margin adds spacing above and below
+    Margin: top right bottom left
+*/
+.login-header {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+
+/* 
+    Sets header text to white and bold 
+*/
+.login-header header{
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+/* 
+    Input fields inside the form will go across the whole container with width,
+    Left and right padding --> Padding: Top&Bottom Left&Right,
+    Borders rounded with border-radius,
+    Adds a little shadow with box-shadow,
+    No default focus outline,
+    Transitions helps add speed to the animation
+*/
+.input-container .input-field {
+    width: 100%;
+    height: 60px;
+    font-size: 17px;
+    padding: 0 25px;
+    margin-bottom: 15px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 5px 10px 1px;
+    outline: none;
+    transition: .3s;
+}
+
+/* 
+    Placeholder text inside input fields (Email and Password),
+*/
+::placeholder {
+    font-weight: 500;
+    color: #222;
+}
+
+/* 
+    Adds subtle shadow when focused
+*/
+.input-field:focus{
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* 
+    Error message holder that is in fixed position, 
+    TranslateX centers horizontally
+*/
+#login-error-msg-holder {
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+}
+
+/* 
+    Message is hidden with visibilitity and opacity,
+    When error occurs, JS displays message
+*/
+#login-error-msg {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 8px 15px;
+    font-size: 14px;
+    color: #8a0000;
+    border: 1px solid #8a0000;
+    border-radius: 5px;
+    background-color: #e58f8f; 
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+}
+
+/* 
+    Remember me and forgot password,
+    Flex adds spacing between elements,
+    Adds spacing below with margin-bottom
+*/
+.forgot {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+/* 
+    Checkbox for "Remember me" and other text,
+    Flex keeps checkbox and text on the same line,
+    Align-items keeps text vertically aligned
+*/
+section {
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    color: #D3D3D3;
+}
+
+/* 
+    Spacing added between check and "Remember me"
+*/
+#check {
+    margin-right: 5px;
+}
+
+/* 
+    Styling for the links,
+    text-decorations removes underline
+*/
+a {
+    text-decoration: none;
+    color: white;
+}
+
+/* 
+    Adds underline to links when hovered over
+*/
+a:hover{
+    text-decoration: underline;
+}
+
+/* 
+    Relative position keeps element position relative to its normal position
+*/
+.input-submit {
+    position: relative;
+}
+
+/* 
+    Cursor: pointer --> changes cursor to help user know they are on the button
+*/
+.submit-btn {
+    font-size: 17px;
+    font-weight: bold;
+    width: 100%;
+    height: 60px;
+    background-color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+/* 
+    When hovered over: background slightly changes color and size
+*/
+.submit-btn:hover {
+    background: #D3D3D3;
+    transform: scale(1.02, 1);
+}
+
+/* 
+    Create an account text styling
+*/
+.create-acc {
+    text-align: center;
+    font-size: 15px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+
+
+

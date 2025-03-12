@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hobbies | Hobby Finder</title>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="hobbies.html">Find Hobbies</a></li>
+            <li><a href="saved_hobbies.html">Saved Hobbies</a></li>
+            <li><a href="#" id="logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Enter interests and find hobbies -->
+    <!-- Interests Container -->
+    <div class="interests-container">
+        <input type="text" id="hobby-input" class="input-field" placeholder="Enter interests">
+        <button id="enter-interests">Search</button>
+    </div>
+
+    <!-- Hobbies Container -->
+    <div class="hobbies-container">
+        <h2>Here's what you might like: </h2>
+        <ul id="hobby-list"></ul>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+        <button id="dashboard">Dashboard</button>
+        <button id="logout">Logout</button>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // Predefined list 
+        const suggestions = {
+            "sports": ["Basketball", "Tennis", "Cycling"],
+            "music": ["Guitar", "Piano", "Drums"],
+            "travel": ["Photography", "Blogging", "Tasting Food"],
+            "outdoors": ["Hiking", "Camping", "Fishing"],
+            "indoors": ["Cooking", "Reading", "Drawing"],
+            "tech": ["3d-printing", "Gaming", "Drones"]
+        };
+        
+        // Redircect to dashboard
+        document.getElementById("dashboard").addEventListener("click", () => {
+            window.location.href = "dashboard.html";
+        });
+
+        // Log out user
+        document.getElementById("logout").addEventListener("click", () => {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        });
+
+        // If users tris to access page but are not logged in
+        if (!localStorage.getItem("user")) {
+            window.location.href = "login.html";
+        }
+
+        document.getElementById("enter-interests").addEventListener("click", () => {
+            const input = document.getElementById("hobby-input").value.trim().toLowerCase(); // gets user input, removes unnecessary spaces, converts to lowercase
+            const hobbies = document.getElementById("hobby-list");
+            hobbies.innerHTML(""); // Removes older search results
+
+            // check the predefined list, only temporary 
+            if (suggestions[input]) {
+                //loop for each
+                for (let hobby for suggestions[input]) {
+                    let li = document.createElement("li");
+                    li.textContent = hobby; // textContent sets text inside element
+
+                    // Save hobbies
+                    let saveBtn = document.createElement("button");
+                    saveBtn.textContent = "Save";
+                    saveBTN.addEventListener("click", () => saveHobby(hobby))
+
+                    li.appendChild(saveBtn); // Save button added to the list
+                    hobbies.appendChild(li); // li shows up on page
+                }
+            } else { // when no suggestions available
+                hobbies.innerHTML = "<p>No suggestions available.</p>"
+            }
+        })
+
+        function saveHobby(hobby) {
+            // Store hobbies to local storage. If no hobbies saved, create an array
+            // local storage is still only temporary
+            let savedHobbies = JSON.parse(localStorage.getItem("savedHobbies")) || [];
+
+            // Check if hobby is saved
+            if(!savedHobbies.includes(hobby)) { // Adds to local storage
+                savedHobbies.push(hobby);
+                localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
+                alert(hobby + " saved");
+            } else {
+                alert(hobby + " is already saved"); 
+            }
+        }
+
+    </script>
+</body>
+</html>

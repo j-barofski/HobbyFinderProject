@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Hobbies | Hobby Finder</title>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="hobbies.html">Find Hobbies</a></li>
+            <li><a href="saved_hobbies.html">Saved Hobbies</a></li>
+            <li><a href="#" id="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- User Management of Hobbies -->
+    <!-- Saved hobbies container -->
+    <section class="saved-container">
+        <h2>Saved Hobbies</h2>
+        <ul id="saved-list"></ul>
+    </section>
+
+    <script>
+        // Show saved hobbies
+        function showSaved() {
+            // get saved hobbies to parse to list, creates empty array if none found
+            let saved = JSON.parse(localStorage.getItem("saved")) || []; 
+            let hobbies = document.getElementById("saved-list");
+            hobbies.innerHTML = ""; // Removes older lists
+
+            // No hobbies saved
+            if (saved.length == 0) {
+                hobbies.innerHTML = "<p>No hobbies saved</p>";
+                return;
+            }
+
+            // Loop to show hobbies
+            for (let hobby of saved) {
+                let li = document.createElement("li");
+                li.textContent = hobby;
+
+                // Remove a hobby
+                let removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remove";
+                removeBtn.addEventListener("click", () => remove(hobby));
+
+                li.appendChild(removeBtn);
+                hobbies.appendChild(li);
+            }
+        }
+
+        // Remove hobbies
+        function remove(hobby) {
+            let saved = JSON.parse(localStorage.getItem("saved")) || []; 
+            saved = saved.filter(h => h !== hobby); // removes
+            localStorage.setItem("saved", JSON.stringify(saved)); // update list
+            showSaved(); // refresh
+        }
+
+        // Load when page loads
+        document.addEventListener("DOMContentLoaded", displaySavedHobbies);
+
+        // Log out user
+        document.getElementById("logout").addEventListener("click", () => {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        });
+    </script>
+
+</body>
+</html>

@@ -1,2 +1,19 @@
 .DS_Store
 .DS_Store
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore database and environment files
+.env
+*.sqlite3
+
+# Ignore log files
+*.log

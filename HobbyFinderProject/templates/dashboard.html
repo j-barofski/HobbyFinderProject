@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Hobby Finder</title>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="hobbies.html">Find Hobbies</a></li>
+            <li><a href="saved_hobbies.html">Saved Hobbies</a></li>
+            <li><a href="#" id="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- The Landing Page -->
+    <section id="hero">
+        <div class="landing-container">
+            <div class="landing-content">
+                <h2 class="landing-title"> <!-- Title of page -->
+                    Find Your Next Hobby 
+                </h2>
+            </div>
+            <!-- Get started button -->
+             <button id="get-started">Get Started</button>
+            <!-- View Saved and Logout Button -->
+            <div class="button-row">
+                <button id="view-saved">View Saved</button>
+                <button id="logout">Logout</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Redirect user to the hobbies page
+        document.getElementById("get-started").addEventLister("click", () => {
+            window.location.href = "hobbies.html";
+        })
+
+        // Redirect user to their saved hobbies page
+        document.getElementById("view-saved").addEventLister("click", () => {
+            window.location.href = "saved.html";
+        })
+
+        // Logout user
+        document.getElementById("logout").addEventLister("click", () => {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        })
+
+        // If users tris to access page but are not logged in
+        if (!localStorage.getItem("user")) {
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

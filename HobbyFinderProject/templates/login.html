@@ -68,7 +68,8 @@
     
             // using local storage to save data in web browser
             // will be removed when SQL is created
-            const storedUser = JSON.parse(localStorage.getItem("user"));
+            const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+            console.log("Stored User:", storedUser);
             
             if (storedUser && username === storedUser.email && password === storedUser.password) {
                 alert("You have successfully logged in.");

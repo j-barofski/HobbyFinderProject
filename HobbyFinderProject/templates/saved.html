@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Hobbies | Hobby Finder</title>
+
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navigation">
-        <ul>
-            <li><a href="dashboard.html">Home</a></li>
-            <li><a href="hobbies.html">Find Hobbies</a></li>
-            <li><a href="saved_hobbies.html">Saved Hobbies</a></li>
-            <li><a href="#" id="logout">Logout</a></li>
-        </ul>
+        <a href="dashboard.html">Home</a>
+        <a class="active" href="saved.html">Saved Hobbies</a>
+        <a href="#" id="logout">Logout</a>
     </nav>
 
     <!-- User Management of Hobbies -->
@@ -24,16 +24,35 @@
     </section>
 
     <script>
+        // Load when page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            // If users tries to access page but are not logged in
+            if (!localStorage.getItem("user")) {
+                window.location.href = "login.html";
+            }
+
+            showSaved();
+
+            // Log out user
+            document.getElementById("logout").addEventListener("click", () => {
+                localStorage.removeItem("user");
+                window.location.href = "login.html";
+            });
+        })
+
         // Show saved hobbies
         function showSaved() {
             // get saved hobbies to parse to list, creates empty array if none found
-            let saved = JSON.parse(localStorage.getItem("saved")) || []; 
+            let saved = JSON.parse(localStorage.getItem("saved")) || [];
+            console.log("Saved Hobbies from Local Storage:", saved); // Debugging line 
             let hobbies = document.getElementById("saved-list");
             hobbies.innerHTML = ""; // Removes older lists
 
             // No hobbies saved
             if (saved.length == 0) {
-                hobbies.innerHTML = "<p>No hobbies saved</p>";
+                let li = document.createElement("li");
+                li.textContent = "No hobbies saved";
+                hobbies.appendChild(li);
                 return;
             }
 
@@ -59,15 +78,6 @@
             localStorage.setItem("saved", JSON.stringify(saved)); // update list
             showSaved(); // refresh
         }
-
-        // Load when page loads
-        document.addEventListener("DOMContentLoaded", displaySavedHobbies);
-
-        // Log out user
-        document.getElementById("logout").addEventListener("click", () => {
-            localStorage.removeItem("user");
-            window.location.href = "login.html";
-        });
     </script>
 
 </body>

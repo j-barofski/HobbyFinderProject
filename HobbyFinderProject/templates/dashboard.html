@@ -4,57 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Hobby Finder</title>
+    
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navigation">
-        <ul>
-            <li><a href="dashboard.html">Home</a></li>
-            <li><a href="hobbies.html">Find Hobbies</a></li>
-            <li><a href="saved_hobbies.html">Saved Hobbies</a></li>
-            <li><a href="#" id="logout">Logout</a></li>
-        </ul>
+        <a class="active" href="dashboard.html">Home</a>
+        <a href="saved.html">Saved Hobbies</a>
+        <a href="#" id="logout">Logout</a>
     </nav>
 
     <!-- The Landing Page -->
     <section id="hero">
-        <div class="landing-container">
-            <div class="landing-content">
-                <h2 class="landing-title"> <!-- Title of page -->
-                    Find Your Next Hobby 
-                </h2>
-            </div>
-            <!-- Get started button -->
-             <button id="get-started">Get Started</button>
-            <!-- View Saved and Logout Button -->
-            <div class="button-row">
-                <button id="view-saved">View Saved</button>
-                <button id="logout">Logout</button>
-            </div>
+        <div class="landing-content">
+            <h2 class="landing-title"> <!-- Title of page -->
+                Find Your Next Hobby 
+            </h2>
+        </div>
+        <!-- Enter interests and find hobbies -->
+        <!-- Interests Container -->
+        <div class="interests-container">
+            <input type="text" id="hobby-input" class="input-field" placeholder="Enter interests">
+            <button id="search-btn">Search</button>
+        </div>
+
+        <!-- Hobbies Container -->
+        <div class="hobbies-container">
+            <h2 id="hobby-suggestions"></h2>
+            <ul id="hobby-list"></ul>
         </div>
     </section>
 
     <script>
-        // Redirect user to the hobbies page
-        document.getElementById("get-started").addEventLister("click", () => {
-            window.location.href = "hobbies.html";
+        // Predefined list 
+        const suggestions = {
+            "sports": ["Basketball", "Tennis", "Cycling"],
+            "music": ["Guitar", "Piano", "Drums"],
+            "travel": ["Photography", "Blogging", "Tasting Food"],
+            "outdoors": ["Hiking", "Camping", "Fishing"],
+            "indoors": ["Cooking", "Reading", "Drawing"],
+            "tech": ["3d-printing", "Gaming", "Drones"]
+        };
+
+        document.getElementById("search-btn").addEventListener("click", () => {
+            const input = document.getElementById("hobby-input").value.trim().toLowerCase(); // gets user input, removes unnecessary spaces, converts to lowercase
+            const hobbies = document.getElementById("hobby-list");
+
+            // If nothing typed
+            if (input === "") {
+                alert("Please enter an interest.");
+                return;
+            }
+
+            hobbies.innerHTML = ""; // Removes older search results
+
+            // check the predefined list, only temporary 
+            if (suggestions[input]) {
+                // test show up when search button clicked
+                document.getElementById('hobby-suggestions').innerText="Here's what you might like: "
+                //loop for each
+                for (let hobby of suggestions[input]) {
+                    let li = document.createElement("li");
+                    li.textContent = hobby; // textContent sets text inside element
+
+                    // Save hobbies
+                    let saveBtn = document.createElement("button");
+                    saveBtn.textContent = "Save";
+                    saveBtn.addEventListener("click", () => saveHobby(hobby))
+
+                    li.appendChild(saveBtn); // Save button added to the list
+                    hobbies.appendChild(li); // li shows up on page
+
+                }
+            } else { // when no suggestions available
+                hobbies.innerHTML = "<p>No suggestions available.</p>"
+            }
         })
 
-        // Redirect user to their saved hobbies page
-        document.getElementById("view-saved").addEventLister("click", () => {
-            window.location.href = "saved.html";
-        })
+        function saveHobby(hobby) {
+            // Store hobbies to local storage. If no hobbies saved, create an array
+            // local storage is still only temporary
+            let savedHobbies = JSON.parse(localStorage.getItem("savedHobbies")) || [];
 
-        // Logout user
-        document.getElementById("logout").addEventLister("click", () => {
-            localStorage.removeItem("user");
-            window.location.href = "login.html";
-        })
+            // Check if hobby is saved
+            if(!savedHobbies.includes(hobby)) { // Adds to local storage
+                savedHobbies.push(hobby);
+                localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
+                alert(hobby + " saved");
+            } else {
+                alert(hobby + " is already saved"); 
+            }
+        }
 
-        // If users tris to access page but are not logged in
+
+        // If users tries to access page but are not logged in
         if (!localStorage.getItem("user")) {
             window.location.href = "login.html";
         }
+        // logout user
+        document.getElementById("logout").addEventListener("click", () => {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        });
     </script>
 </body>
 </html>

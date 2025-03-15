@@ -460,3 +460,29 @@ a:hover{
 #saved-list li button:hover {
     background: #66b2b2;
 }
+
+/* 
+    Sign Up form -----------------------------------------------------
+*/
+/* 
+    sign up container
+*/
+.signup {
+    position: relative;
+    text-align: center;
+    width: 440px;
+    height: 480px;
+    padding: 30px;
+}
+/* 
+    Form title
+*/
+.signup-header {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+.signup-header header {
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+}

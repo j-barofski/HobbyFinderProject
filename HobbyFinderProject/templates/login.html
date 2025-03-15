@@ -17,7 +17,7 @@
 
         <!-- Email Container -->
         <div class="input-container">
-            <input type="text" id="email" class="input-field" placeholder="Email" autocomplete="off" required>
+            <input type="email" id="email" class="input-field" placeholder="Email" autocomplete="off" required>
         </div>
 
         <!-- Password Container -->
@@ -49,7 +49,7 @@
 
         <!-- Create an account option -->
         <div class="create-acc">
-            <a href="#">Create an Account</a></p>
+            <a href="signup.html">Create an Account</a></p>
         </div>
     </form>
 
@@ -63,7 +63,7 @@
             e.preventDefault(); // Prevent form submission, only want to validate it
 
             // Retrieve user info
-            const username = document.getElementById("email").value.trim() // trim removes whitespace
+            const email = document.getElementById("email").value.trim() // trim removes whitespace
             const password = document.getElementById("password").value.trim()
     
             // using local storage to save data in web browser
@@ -71,7 +71,7 @@
             const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
             console.log("Stored User:", storedUser);
             
-            if (storedUser && username === storedUser.email && password === storedUser.password) {
+            if (storedUser && email === storedUser.email && password === storedUser.password) {
                 alert("You have successfully logged in.");
                 window.location.href = "dashboard.html"; // Redirects when successfully logged in
             } else {

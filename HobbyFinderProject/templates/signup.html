@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Hobby Finder</title>
+
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <!-- Sign Up Form -->
+    <form class="signup">
+        <div class = "signup-header" action="#" method = "post">
+            <header>Sign Up</header>   
+        </div>
+        <!-- Full name sign up container -->
+        <div class="input-container">
+            <input type="text" id="fullname" class="input-field" name="fullname" placeholder="Full Name">
+        </div>
+        <!-- Email sign up container -->
+        <div class="input-container">
+            <input type="email" id="signup-email" class="input-field" name="email" placeholder="Email">
+        </div>
+        <!-- Password sign up container -->
+        <div class="input-container">
+            <input type="password" id="signup-password" class="input-field" name="password" placeholder="Password">
+        </div>
+        
+        <!-- Sign Up Button -->
+        <div class="input-submit">
+            <button type="submit" class="submit-btn" id="submit">Sign Up</button>
+        </div>
+    </form>
+
+    <script>
+        const SignUpForm = document.querySelector(".signup");
+        const SignUpButton = document.getElementById("submit");
+    
+        SignUpButton.addEventListener("click", (e) => { // e is mouse event when submit button is clicked
+            e.preventDefault(); // Prevent form submission, only want to validate it
+
+            // using local storage to save data in web browser
+            // will be removed when SQL is created
+            const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+            console.log("Stored User:", storedUser);
+
+            const fullname = document.getElementById("fullname").value.trim()
+            const email = document.getElementById("signup-email").value.trim() // trim removes whitespace
+            const password = document.getElementById("signup-password").value.trim()
+
+            if (fullname && email && password) {
+                localStorage.setItem("user", JSON.stringify({ fullname, email, password }));
+                alert("You have successfully signed up.");
+                window.location.href = "dashboard.html"; // Redirects when successfully logged in
+            } else {
+                alert("Please fill out the form.")
+            }
+        })
+    </script>
+</body>
+</html>

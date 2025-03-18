@@ -202,14 +202,16 @@ a:hover{
 }
 
 /* 
-    Create an account text styling
+    For guest log in and create account option
 */
-.create-acc {
-    text-align: center;
-    font-size: 15px;
+.other-acc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 20px;
     font-size: 17px;
 }
+
 
 /* 
     navigation bar

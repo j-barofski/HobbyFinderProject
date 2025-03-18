@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password | Hobby Finder</title>
+
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <a href="login.html">Log In</a>
+        <a href="signup.html">Sign Up</a>
+    </nav>
+    <!-- Forgot Password Form -->
+    <form class="forgot-form" action="#" method = "post">
+        <div class = "forgot-header">
+            <header>Forgot Password</header>   
+        </div>
+        <!-- Email sign up container -->
+        <div class="input-container">
+            <input type="email" id="forgot-email" class="input-field" name="email" placeholder="Email">
+        </div>
+        <!-- Reset Button -->
+        <div class="input-submit">
+            <button type="submit" class="submit-btn" id="submit">Reset</button>
+        </div>
+    </form>
+
+    <script>
+        const ForgotForm = document.querySelector(".forgot-form");
+        const ForgotButton = document.getElementById("submit");
+    
+        ForgotButton.addEventListener("click", (e) => { // e is mouse event when submit button is clicked
+            e.preventDefault(); // Prevent form submission, only want to validate it
+
+            // using local storage to save data in web browser
+            // will be removed when SQL is created
+            const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+            console.log("Stored User:", storedUser);
+
+            const email = document.getElementById("forgot-email").value.trim() // trim removes whitespace
+            
+            // If user exists and email matches
+            if (storedUser && storedUser.email === email) {
+                localStorage.removeItem("user"); // user info removed
+                alert("Your account has been reset.");
+                window.location.href = "signup.html"; // Redirects when successfully logged in
+            } else {
+                alert("Email not found. Please try again.")
+            }
+        })
+    </script>
+</body>
+</html>

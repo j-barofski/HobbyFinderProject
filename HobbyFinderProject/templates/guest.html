@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Mode | Hobby Finder</title>
+
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Log In</a>
+    </nav>
+    
+     <!-- The Landing Page -->
+    <section id="hero">
+        <div class="landing-content">
+            <h2 class="landing-title"> <!-- Title of page -->
+                Find Your Next Hobby 
+            </h2>
+        </div>
+        <!-- Enter interests and find hobbies -->
+        <!-- Interests Container -->
+        <div class="interests-container">
+            <input type="text" id="hobby-input" class="input-field" placeholder="Enter interests">
+            <button id="search-btn">Search</button>
+        </div>
+
+        <!-- Hobbies Container -->
+        <div class="hobbies-container">
+            <h2 id="hobby-suggestions"></h2>
+            <ul id="hobby-list"></ul>
+        </div>
+    </section>
+
+    <script>
+        // Predefined list 
+        const suggestions = {
+            "sports": ["Basketball", "Tennis", "Cycling"],
+            "music": ["Guitar", "Piano", "Drums"],
+            "travel": ["Photography", "Blogging", "Tasting Food"],
+            "outdoors": ["Hiking", "Camping", "Fishing"],
+            "indoors": ["Cooking", "Reading", "Drawing"],
+            "tech": ["3d-printing", "Gaming", "Drones"]
+        };
+
+        document.getElementById("search-btn").addEventListener("click", () => {
+            const input = document.getElementById("hobby-input").value.trim().toLowerCase(); // gets user input, removes unnecessary spaces, converts to lowercase
+            const hobbies = document.getElementById("hobby-list");
+
+            // If nothing typed
+            if (input === "") {
+                alert("Please enter an interest.");
+                return;
+            }
+
+            hobbies.innerHTML = ""; // Removes older search results
+
+            // check the predefined list, only temporary 
+            if (suggestions[input]) {
+                // test show up when search button clicked
+                document.getElementById('hobby-suggestions').innerText="Here's what you might like: "
+                //loop for each
+                for (let hobby of suggestions[input]) {
+                    let li = document.createElement("li");
+                    li.textContent = hobby; // textContent sets text inside element
+                    hobbies.appendChild(li); // li shows up on page
+                }
+            } else { // when no suggestions available
+                hobbies.innerHTML = "<p>No suggestions available.</p>"
+            }
+        })
+    </script>
+</body>
+</html>

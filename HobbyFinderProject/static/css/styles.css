@@ -349,9 +349,9 @@ a:hover{
     margin: 20px auto;
 }
 /* 
-    h2 text
+    hobby suggestions text
 */
-.hobbies-container h2 {
+#hobby-suggestions {
     margin-bottom: 5px;
 }
 /* 
@@ -375,6 +375,7 @@ a:hover{
     justify-content: space-between;
     align-items: center;
 }
+
 /* 
     hobby list save buttons
 */
@@ -477,13 +478,39 @@ a:hover{
     padding: 30px;
 }
 /* 
-    Form title
+    Sign Up Form title
 */
 .signup-header {
     text-align: center;
     margin: 20px 0 40px 0;
 }
 .signup-header header {
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+/* 
+    Forgot Password form -----------------------------------------------------
+*/
+/* 
+    Forgot password container
+*/
+.forgot-form {
+    position: relative;
+    text-align: center;
+    width: 440px;
+    height: 480px;
+    padding: 30px;
+}
+/* 
+    Forgot Password Form title
+*/
+.forgot-header {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+.forgot-header header {
     color: white;
     font-size: 30px;
     font-weight: 600;

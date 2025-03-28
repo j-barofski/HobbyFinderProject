@@ -33,7 +33,19 @@
         <!-- Hobbies Container -->
         <div class="hobbies-container">
             <h2 id="hobby-suggestions"></h2>
-            <ul id="hobby-list"></ul>
+            <ul id="hobby-list">
+                <!-- Loops through the hobbies from database -->
+                {% for hobby in hobbies %}
+                    <li>
+                        <strong>{{ hobby.name }}</strong>
+                        <!-- Save button -->
+                        <button onclick="saveHobby('{{ hobby.name }}')">Save</button>
+                    </li>
+                <!-- if empty -->
+                (% empty %)
+                    <p>No hobbies found.</p>
+                (% endfor %)
+            </ul>
         </div>
     </section>
 

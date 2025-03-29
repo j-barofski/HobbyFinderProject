@@ -16,9 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views # handles requests
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hobbies/', views.get_hobbies, name = 'get_hobbies'), # url to show hobby list
 ]

@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
-from models import db, User, Hobby, UserHobby
+from models import db, User, Hobby, SavedHobby
+
+from flask_cors import CORS
+CORS(app)
 
 app = Flask(__name__) # creates the app
 
@@ -7,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hobby_finder.db' # location o
 app.config['SQLALCHEMY_TRACK_NOTIFICATIONS'] = False # do not want notis
 
 db.init_app(app) # link db and app
-
+    
 
 # CRUD FUNCTIONALITES FOR USERS
 @app.route('/users', methods=['POST']) # Create the users
@@ -33,7 +36,7 @@ def get_user(user_id):
         'email': user.email
     })
 
-@app.route('/users/<int:user_id', methods=['PUT']) # Update the users
+@app.route('/users/<int:user_id>', methods=['PUT']) # Update the users
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     data = request.json
@@ -71,15 +74,15 @@ def get_hobby():
         'hobby_name': h.hobby_name
     } for h in hobbies])
 
-@app.route('/hobbies/<int:hobby_id', methods=['PUT']) # Update the hobbies
+@app.route('/hobbies/<int:hobby_id>', methods=['PUT']) # Update the hobbies
 def update_hobby(hobby_id):
     hobby = Hobby.query.get_or_404(hobby_id)
     data = request.json
-    hobby.name = data.get('hobby_name', hobby.hobby_name)
+    hobby.hobby_name = data.get('hobby_name', hobby.hobby_name)
     db.session.commit()
     return jsonify({'message': 'Updated Hobby'})
 
-@app.route('/hobbies/<int:hobby_id', methods=['DELETE']) # Delete the hobbies
+@app.route('/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the hobbies
 def delete_hobby(hobby_id):
     hobby = Hobby.query.get_or_404(hobby_id)
     db.session.delete(hobby)
@@ -87,19 +90,20 @@ def delete_hobby(hobby_id):
     return jsonify({'message': 'Deleted Hobby'})
 
 
-# CRUD FUNCTIONALITES FOR USER HOBBIES
-@app.route('/users/<int:user_id>/hobbies', methods=['POST']) # Add a hobby to a user
-def add_hobby(user_id):
+# CRUD FUNCTIONALITES FOR SAVED HOBBIES
+@app.route('/users/<int:user_id>/hobbies', methods=['POST']) # Save a hobby to a user
+def save_hobby(user_id):
     data = request.json
     hobby = Hobby.query.get_or_404(data['hobby_id'])
 
     # Add to user_hobbies table
-    user_hobby = UserHobby(user_id = user_id, hobby_id = hobby.hobby_id)
-    db.session.add(user_hobby)
+    saved_hobby = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
+    db.session.add(saved_hobby)
     db.session.commit()
-    return jsonify({'message': 'Added Hobby to User'}), 201
+    return jsonify({'message': 'Saved Hobby to User'}), 201
 
-@app.route('/users/<int:user_id>/hobbies', methods=['GET']) # Retrieve the user's hobbies
+
+@app.route('/users/<int:user_id>/hobbies', methods=['GET']) # Retrieve the user's saved hobbies
 def get_user_hobbies(user_id):
     user = User.query.get_or_404(user_id)
     hobbies = user.hobbies 
@@ -108,9 +112,48 @@ def get_user_hobbies(user_id):
         'name': hobby.hobby_name,
     }for hobby in hobbies])
 
-@app.route('/users/<int:user_id/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the user's hobbies
+@app.route('/users/<int:user_id>/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the user's saved hobbies
 def delete_user_hobbies(user_id, hobby_id):
-    user_hobby = User.query.filter_by(user_id = user_id, hobby_id = hobby_id).first() # find first instance from query
-    db.session.delete(user_hobby)
+    saved_hobby = SavedHobby.query.filter_by(user_id = user_id, hobby_id = hobby_id).first() # find first instance from query
+    db.session.delete(saved_hobby)
     db.session.commit()
     return jsonify({'message': 'Deleted Hobby From User'})
+
+
+
+# Login for user
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    user = User.query.filter_by(email = data['email']).first() # find user
+    if user and user.password == data['password']: # if passwords match
+        return jsonify({'message': 'Logged in the User', 'user_id': user.user_id}) # successful login
+    else:
+        return jsonify({'message': 'Unsuccessful Login Attempt'}) # unsuccessful
+    
+# Sign up for user
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    if not data.get('fullname') or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Please fill out the form.'}), 400 # missing input
+    
+    existing_user = User.query.filter_by(email = data['email']).first()
+    if existing_user:
+        return jsonify({'message': 'User already exists'}), 409 # check for existing users
+    
+    new_user = User( # making the new user
+        fullname = data['fullname'],
+        email = data['email'],
+        password = data['password']
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'User signed up', 'user_id': new_user.user_id}), 201
+
+
+# Runs the app on port 5500
+if __name__ == '__main__':
+    app.run(debug=True, host='127.0.0.1', port=5500)  

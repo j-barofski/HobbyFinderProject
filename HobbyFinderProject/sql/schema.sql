@@ -9,13 +9,13 @@ CREATE TABLE users (
     password varchar(50) NOT NULL
 );
 
--- hobbiesnpo
+-- hobbies
 CREATE TABLE hobbies (
     hobby_id SERIAL PRIMARY KEY,
     hobby_name varchar(100) NOT NULL -- the hobby 
 );
 
--- hobbies
+-- the user's hobbies
 CREATE TABLE user_hobbies ( -- connects the user and hobby tables together
     user_hobby_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE, -- connects the user's id to table

@@ -364,6 +364,12 @@ a:hover{
     color: black;
 }
 /* 
+    no hobbies available
+*/
+#hobby-list p {
+    color: white;
+}
+/* 
     hobby list items
 */
 #hobby-list li {

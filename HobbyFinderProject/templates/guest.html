@@ -44,7 +44,8 @@
             "travel": ["Photography", "Blogging", "Tasting Food"],
             "outdoors": ["Hiking", "Camping", "Fishing"],
             "indoors": ["Cooking", "Reading", "Drawing"],
-            "tech": ["3d-printing", "Gaming", "Drones"]
+            "tech": ["3d-printing", "Gaming", "Drones"],
+            "art": ["Crafting", "Pottery", ]
         };
 
         document.getElementById("search-btn").addEventListener("click", () => {
@@ -70,6 +71,7 @@
                     hobbies.appendChild(li); // li shows up on page
                 }
             } else { // when no suggestions available
+                document.getElementById('hobby-suggestions').innerText=""
                 hobbies.innerHTML = "<p>No suggestions available.</p>"
             }
         })

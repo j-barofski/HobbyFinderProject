@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify
 from models import db, User, Hobby, SavedHobby
 
 from flask_cors import CORS
-CORS(app)
 
 app = Flask(__name__) # creates the app
+CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hobby_finder.db' # location of the database
 app.config['SQLALCHEMY_TRACK_NOTIFICATIONS'] = False # do not want notis
@@ -47,7 +47,7 @@ def update_user(user_id):
     db.session.commit()
     return jsonify({'message': 'Updated User'})
 
-@app.route('/users/<int:user_id', methods=['DELETE']) # Delete the users
+@app.route('/users/<int:user_id>', methods=['DELETE']) # Delete the users
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)

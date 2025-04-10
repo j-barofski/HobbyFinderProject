@@ -40,43 +40,55 @@
             });
         })
 
-        // Show saved hobbies
-        function showSaved() {
-            // get saved hobbies to parse to list, creates empty array if none found
-            let saved = JSON.parse(localStorage.getItem("saved")) || [];
-            console.log("Saved Hobbies from Local Storage:", saved); // Debugging line 
-            let hobbies = document.getElementById("saved-list");
-            hobbies.innerHTML = ""; // Removes older lists
+        // Show saved hobbies and send to backend
+        async function showSaved() {
+            const userId = localStorage.getItem("user_id");
+            const hobbyList = docunt.getElemendById("saved-list");
+            hobbyList.innerHTML = ""; // Removes older lists
 
-            // No hobbies saved
-            if (saved.length == 0) {
-                let li = document.createElement("li");
-                li.textContent = "No hobbies saved";
-                hobbies.appendChild(li);
-                return;
+            try {
+                const response = await fetch(`/users/${userId}/hobbies`);
+                const hobbies = await response.json();
+
+                // if no hobbies saved
+                if (hobbies.length === 0) {
+                    let li = document.createElement("li");
+                    li.textContent = "No hobbies saved";
+                    hobbyList.appendChild(li);
+                    return;
+                }
             }
-
+             
             // Loop to show hobbies
-            for (let hobby of saved) {
+            hobbyList.forEach(hobby => {
                 let li = document.createElement("li");
-                li.textContent = hobby;
+                li.textContent = hobby.name;
 
                 // Remove a hobby
                 let removeBtn = document.createElement("button");
                 removeBtn.textContent = "Remove";
-                removeBtn.addEventListener("click", () => remove(hobby));
+                removeBtn.addEventListener("click", () => removeHobby(userId, hobby.id, li));
 
                 li.appendChild(removeBtn);
-                hobbies.appendChild(li);
-            }
+                hobbyList.appendChild(li);
+            });
+
+        } catch (error) {
+            console.error("Error showing hobbies", error);
+            hobbyList.innerHTML = "<li>Cannot load hobbies at this time.</li>"
         }
 
         // Remove hobbies
-        function remove(hobby) {
-            let saved = JSON.parse(localStorage.getItem("saved")) || []; 
-            saved = saved.filter(h => h !== hobby); // removes
-            localStorage.setItem("saved", JSON.stringify(saved)); // update list
-            showSaved(); // refresh
+        async function remove(hobby) {
+            const response = await fetch(`/users/${userId}/hobbies/${hobbyID}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                hobbyListItem.remove();
+                alert("Removed Hobby"); // hobby successfully removed
+            } else {
+                alert("Could not remove hobby") // hobby unsuccessfully removed
+            }
         }
     </script>
 

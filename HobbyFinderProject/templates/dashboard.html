@@ -41,10 +41,9 @@
                         <!-- Save button -->
                         <button onclick="saveHobby('{{ hobby.name }}')">Save</button>
                     </li>
-                <!-- if empty -->
-                (% empty %)
+                {% else %}
                     <p>No hobbies found.</p>
-                (% endfor %)
+                {% endfor %}
             </ul>
         </div>
     </section>
@@ -71,8 +70,9 @@
             }
 
             hobbies.innerHTML = ""; // Removes older search results
+            document.getElementById('hobby-suggestions').innerText = "";
 
-            // check the predefined list, only temporary 
+            // check the predefined list
             if (suggestions[input]) {
                 // test show up when search button clicked
                 document.getElementById('hobby-suggestions').innerText="Here's what you might like: "
@@ -95,7 +95,7 @@
             }
         })
 
-        function saveHobby(hobby) {
+        async function saveHobby(hobby) {
             // Store hobbies to local storage. If no hobbies saved, create an array
             // local storage is still only temporary
             let savedHobbies = JSON.parse(localStorage.getItem("savedHobbies")) || [];
@@ -104,12 +104,27 @@
             if(!savedHobbies.includes(hobby)) { // Adds to local storage
                 savedHobbies.push(hobby);
                 localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
-                alert(hobby + " saved");
+
+                // send to backend
+                const userId = localStorage.getItem("user_id"); 
+                const response = await fetch(`/users/${userId}/hobbies`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ hobby_id: getHobbyId(hobby) }) // go to server
+                });             
+
+                if (response.ok) {
+                    alert(hobby + " saved");
+                } else {
+                    alert(hobby + " failed to save")
+                }
+                
             } else {
                 alert(hobby + " is already saved"); 
-            }
+            } 
         }
-
 
         // If users tries to access page but are not logged in
         if (!localStorage.getItem("user")) {

@@ -98,6 +98,12 @@ def save_hobby(user_id):
 
     # Add to user_hobbies table
     saved_hobby = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
+
+    # if hobby already saved
+    already_saved = SavedHobby.query.filter_by(user_id=user_id, hobby_id=hobby.hobby_id).first()
+    if already_saved:
+        return jsonify({'message': 'Hobby already saved'}), 409
+
     db.session.add(saved_hobby)
     db.session.commit()
     return jsonify({'message': 'Saved Hobby to User'}), 201

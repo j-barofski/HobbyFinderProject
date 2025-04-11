@@ -50,7 +50,7 @@
             const password = document.getElementById("signup-password").value.trim()
 
             try { // Send to backend
-                const response = await fetch("http://127.0.0.1:5500/signup", {
+                const response = await fetch("http://127.0.0.1:5000/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -72,7 +72,6 @@
                     alert("Please fill out the form.")
                 }
             } catch (error) { // for server issues
-                showError("Unable to Sign Up at This Time.");
                 console.error("Unsuccessful Signup", error);
             }
         })

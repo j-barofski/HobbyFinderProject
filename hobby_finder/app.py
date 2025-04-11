@@ -4,7 +4,8 @@ from models import db, User, Hobby, SavedHobby
 from flask_cors import CORS
 
 app = Flask(__name__) # creates the app
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hobby_finder.db' # location of the database
 app.config['SQLALCHEMY_TRACK_NOTIFICATIONS'] = False # do not want notis
@@ -56,16 +57,6 @@ def delete_user(user_id):
 
 
 # CRUD FUNCTIONALITES FOR HOBBIES
-@app.route('/hobbies', methods=['POST']) # Create the hobbies
-def create_hobby():
-    data = request.json
-    new_hobby = Hobby(
-        hobby_name = data['name'],
-    )
-    db.session.add(new_hobby)
-    db.session.commit()
-    return jsonify({'message': 'Added Hobby'}), 201
-
 @app.route('/hobbies', methods=['GET']) # Retrieve the hobbies
 def get_hobby():
     hobbies = Hobby.query.all()
@@ -73,21 +64,6 @@ def get_hobby():
         'hobby_id': h.hobby_id,
         'hobby_name': h.hobby_name
     } for h in hobbies])
-
-@app.route('/hobbies/<int:hobby_id>', methods=['PUT']) # Update the hobbies
-def update_hobby(hobby_id):
-    hobby = Hobby.query.get_or_404(hobby_id)
-    data = request.json
-    hobby.hobby_name = data.get('hobby_name', hobby.hobby_name)
-    db.session.commit()
-    return jsonify({'message': 'Updated Hobby'})
-
-@app.route('/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the hobbies
-def delete_hobby(hobby_id):
-    hobby = Hobby.query.get_or_404(hobby_id)
-    db.session.delete(hobby)
-    db.session.commit()
-    return jsonify({'message': 'Deleted Hobby'})
 
 
 # CRUD FUNCTIONALITES FOR SAVED HOBBIES
@@ -133,10 +109,11 @@ def login():
     data = request.json
     user = User.query.filter_by(email = data['email']).first() # find user
     if user and user.password == data['password']: # if passwords match
-        return jsonify({'message': 'Logged in the User', 'user_id': user.user_id}) # successful login
+        return jsonify({'message': 'Logged in the User', 'user_id': user.user_id}), 200 # successful login
     else:
-        return jsonify({'message': 'Unsuccessful Login Attempt'}) # unsuccessful
-    
+        return jsonify({'message': 'Unsuccessful Login Attempt'}), 401 # unsuccessful
+
+        
 # Sign up for user
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -160,6 +137,6 @@ def signup():
     return jsonify({'message': 'User signed up', 'user_id': new_user.user_id}), 201
 
 
-# Runs the app on port 5500
+# Runs the app on port 5000
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5500)  
+    app.run(debug=True, host='127.0.0.1', port=5000)  

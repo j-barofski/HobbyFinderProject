@@ -18,8 +18,7 @@ db.init_app(app) # link db and app
 def create_user():
     data = request.json
     new_user = User(
-        first_name = data['first_name'],
-        last_name = data['last_name'],
+        full_name = data['full_name'],
         email = data['email'],
         password = data['password']
     )
@@ -32,8 +31,7 @@ def get_user(user_id):
     user = User.query.get_or_404(user_id) # if not found, raise a 404 error
     return jsonify({ # create a list
         'user_id': user.user_id,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
+        'full_name': user.full_name,
         'email': user.email
     })
 
@@ -41,8 +39,7 @@ def get_user(user_id):
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     data = request.json
-    user.first_name = data.get('first_name', user.first_name)
-    user.last_name = data.get('last_name', user.last_name)
+    user.full_name = data.get('full_name', user.full_name)
     user.email = data.get('email', user.email)
     user.password = data.get('password', user.password)
     db.session.commit()
@@ -106,37 +103,49 @@ def delete_user_hobbies(user_id, hobby_id):
 # Login for user
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json
-    user = User.query.filter_by(email = data['email']).first() # find user
-    if user and user.password == data['password']: # if passwords match
-        return jsonify({'message': 'Logged in the User', 'user_id': user.user_id}), 200 # successful login
-    else:
-        return jsonify({'message': 'Unsuccessful Login Attempt'}), 401 # unsuccessful
-
+    try: 
+        if request.method == 'OPTIONS': # pre-flight request
+            return '', 200 # 200 and CORS header
+        data = request.json
+        user = User.query.filter_by(email = data['email']).first() # find user
+        if user and user.password == data['password']: # if passwords match
+            return jsonify({'message': 'Logged in the User', 'user_id': user.user_id}), 200 # successful login
+        else:
+            return jsonify({'message': 'Unsuccessful Login Attempt'}), 401 # unsuccessful
+    except Exception as e:
+        print("Error in /login:", e)
+        return jsonify({'message': 'Internal server error'}), 500
         
 # Sign up for user
 @app.route('/signup', methods=['POST'])
 def signup():
-    data = request.json
-    if not data.get('fullname') or not data.get('email') or not data.get('password'):
-        return jsonify({'message': 'Please fill out the form.'}), 400 # missing input
-    
-    existing_user = User.query.filter_by(email = data['email']).first()
-    if existing_user:
-        return jsonify({'message': 'User already exists'}), 409 # check for existing users
-    
-    new_user = User( # making the new user
-        fullname = data['fullname'],
-        email = data['email'],
-        password = data['password']
-    )
+    try: 
+        if request.method == 'OPTIONS': # pre-flight request
+            return '', 200 # 200 and CORS header
+        data = request.json
+        if not data.get('fullname') or not data.get('email') or not data.get('password'):
+            return jsonify({'message': 'Please fill out the form.'}), 400 # missing input
+        
+        existing_user = User.query.filter_by(email = data['email']).first()
+        if existing_user:
+            return jsonify({'message': 'User already exists'}), 409 # check for existing users
+        
+        new_user = User( # making the new user
+            full_name = data['fullname'],
+            email = data['email'],
+            password = data['password']
+        )
 
-    db.session.add(new_user)
-    db.session.commit()
+        db.session.add(new_user)
+        db.session.commit()
 
-    return jsonify({'message': 'User signed up', 'user_id': new_user.user_id}), 201
-
+        return jsonify({'message': 'User signed up', 'user_id': new_user.user_id}), 201
+    except Exception as e:
+        print("Error in /signup:", e)
+        return jsonify({'message': 'Internal server error'}), 500
 
 # Runs the app on port 5000
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5000)  
+    with app.app_context():
+        db.create_all() # creating DB tables
+    app.run(debug=True, host='127.0.0.1', port=5050)  

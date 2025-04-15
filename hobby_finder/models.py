@@ -5,8 +5,7 @@ db = SQLAlchemy() # database
 class User(db.Model): # user class
     __tablename__ = 'users' # connect to the users table
     user_id = db.Column(db.Integer, primary_key=True) 
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
+    full_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
 

@@ -3,6 +3,12 @@ from models import db, User, Hobby, SavedHobby
 
 from flask_cors import CORS
 
+hobbies_data = [ # test
+    {'name': 'Basketball'},
+    {'name': 'Tennis'},
+    {'name': 'Cycling'}
+]
+
 app = Flask(__name__) # creates the app
 CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
 
@@ -63,7 +69,7 @@ def get_hobby():
     } for h in hobbies])
 
 
-# CRUD FUNCTIONALITES FOR SAVED HOBBIES
+# CRUD FUNCTIONALITES FOR SAVED HOBBIESabc
 @app.route('/users/<int:user_id>/hobbies', methods=['POST']) # Save a hobby to a user
 def save_hobby(user_id):
     data = request.json
@@ -143,6 +149,7 @@ def signup():
     except Exception as e:
         print("Error in /signup:", e)
         return jsonify({'message': 'Internal server error'}), 500
+    
 
 # Runs the app on port 5000
 if __name__ == '__main__':

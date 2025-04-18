@@ -19,5 +19,5 @@ class Hobby(db.Model): # hobby class
 
 class SavedHobby(db.Model): # USaved hobbies class - Save the user's hobbies
     __tablename__ = 'user_hobbies' # connect to the user_hobbies table
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    hobby_id = db.Column(db.Integer, db.ForeignKey('hobbies.hobby_id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), primary_key=True)
+    hobby_id = db.Column(db.Integer, db.ForeignKey('hobbies.hobby_id', ondelete='CASCADE'), primary_key=True)

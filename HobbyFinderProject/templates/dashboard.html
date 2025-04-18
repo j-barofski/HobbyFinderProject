@@ -33,18 +33,7 @@
         <!-- Hobbies Container -->
         <div class="hobbies-container">
             <h2 id="hobby-suggestions"></h2>
-            <ul id="hobby-list">
-                <!-- Loops through the hobbies from database -->
-                {% for hobby in hobbies %}
-                    <li>
-                        <strong>{{ hobby.name }}</strong>
-                        <!-- Save button -->
-                        <button onclick="saveHobby('{{ hobby.name }}')">Save</button>
-                    </li>
-                {% else %}
-                    <p>No hobbies found.</p>
-                {% endfor %}
-            </ul>
+            <ul id="hobby-list"></ul>
         </div>
     </section>
 
@@ -56,12 +45,14 @@
             "travel": ["Photography", "Blogging", "Tasting Food"],
             "outdoors": ["Hiking", "Camping", "Fishing"],
             "indoors": ["Cooking", "Reading", "Drawing"],
-            "tech": ["3d-printing", "Gaming", "Drones"]
+            "tech": ["3d-printing", "Gaming", "Drones"],
+            "art": ["Crafting", "Pottery", "Animation"]
         };
 
         document.getElementById("search-btn").addEventListener("click", () => {
             const input = document.getElementById("hobby-input").value.trim().toLowerCase(); // gets user input, removes unnecessary spaces, converts to lowercase
-            const hobbies = document.getElementById("hobby-list");
+            // const hobbies = document.getElementById("hobby-list");
+            const hobbiesContainer = document.getElementById("hobby-list");
 
             // If nothing typed
             if (input === "") {
@@ -69,7 +60,7 @@
                 return;
             }
 
-            hobbies.innerHTML = ""; // Removes older search results
+            hobbiesContainer.innerHTML = ""; // Removes older search results
             document.getElementById('hobby-suggestions').innerText = "";
 
             // check the predefined list
@@ -87,11 +78,11 @@
                     saveBtn.addEventListener("click", () => saveHobby(hobby))
 
                     li.appendChild(saveBtn); // Save button added to the list
-                    hobbies.appendChild(li); // li shows up on page
+                    hobbiesContainer.appendChild(li); // li shows up on page
 
                 }
             } else { // when no suggestions available
-                hobbies.innerHTML = "<p>No suggestions available.</p>"
+                hobbiesContainer.innerHTML = "<p>No suggestions available.</p>"
             }
         })
 
@@ -106,8 +97,8 @@
                 localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
 
                 // send to backend
-                const userId = localStorage.getItem("user_id"); 
-                const response = await fetch(`/users/${userId}/hobbies`, {
+                const userID = localStorage.getItem("user_id"); 
+                const response = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -118,7 +109,7 @@
                 if (response.ok) {
                     alert(hobby + " saved");
                 } else {
-                    alert(hobby + " failed to save")
+                    alert(hobby + " failed to save");
                 }
                 
             } else {

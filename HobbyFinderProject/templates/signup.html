@@ -42,7 +42,7 @@
         const SignUpForm = document.querySelector(".signup");
         const SignUpButton = document.getElementById("submit");
     
-        SignUpButton.addEventListener("click", async (e) => { // e is mouse event when submit button is clicked
+        signUpButton.addEventListener("click", async (e) => { // e is mouse event when submit button is clicked
             e.preventDefault(); // Prevent form submission, only want to validate it
 
             const fullname = document.getElementById("fullname").value.trim()
@@ -50,7 +50,7 @@
             const password = document.getElementById("signup-password").value.trim()
 
             try { // Send to backend
-                const response = await fetch("http://127.0.0.1:5000/signup", {
+                const response = await fetch("http://127.0.0.1:5050/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

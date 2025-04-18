@@ -98,13 +98,22 @@
 
                 // send to backend
                 const userID = localStorage.getItem("user_id"); 
-                const response = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ hobby_id: getHobbyId(hobby) }) // go to server
-                });             
+
+                const response = await fetch('http://127.0.0.1:5050/hobbies/${hobby}');
+                const hobbyData = await response.json();
+
+                if (hobbyData && hobbyData.hobby_id) {
+                    const hobbyID = hobbyData.hobby_id;
+
+                    const saveResponse = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ hobby_id: hobbyID }) // go to server
+                    });
+                }
+   
 
                 if (response.ok) {
                     alert(hobby + " saved");
@@ -129,3 +138,4 @@
     </script>
 </body>
 </html>
+

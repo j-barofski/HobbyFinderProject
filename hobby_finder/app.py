@@ -3,11 +3,6 @@ from models import db, User, Hobby, SavedHobby
 
 from flask_cors import CORS
 
-hobbies_data = [ # test
-    {'name': 'Basketball'},
-    {'name': 'Tennis'},
-    {'name': 'Cycling'}
-]
 
 app = Flask(__name__) # creates the app
 CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
@@ -61,7 +56,7 @@ def delete_user(user_id):
 
 # CRUD FUNCTIONALITES FOR HOBBIES
 @app.route('/hobbies', methods=['GET']) # Retrieve the hobbies
-def get_hobby():
+def get_hobbies():
     hobbies = Hobby.query.all()
     return jsonify([{ # create a list
         'hobby_id': h.hobby_id,
@@ -71,40 +66,50 @@ def get_hobby():
 
 # CRUD FUNCTIONALITES FOR SAVED HOBBIESabc
 @app.route('/users/<int:user_id>/hobbies', methods=['POST']) # Save a hobby to a user
-def save_hobby(user_id):
+def save_hobbies(user_id):
     data = request.json
     hobby = Hobby.query.get_or_404(data['hobby_id'])
 
     # Add to user_hobbies table
-    saved_hobby = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
+    saved_hobbies = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
 
     # if hobby already saved
     already_saved = SavedHobby.query.filter_by(user_id=user_id, hobby_id=hobby.hobby_id).first()
     if already_saved:
         return jsonify({'message': 'Hobby already saved'}), 409
 
-    db.session.add(saved_hobby)
+    db.session.add(saved_hobbies)
     db.session.commit()
     return jsonify({'message': 'Saved Hobby to User'}), 201
 
 
 @app.route('/users/<int:user_id>/hobbies', methods=['GET']) # Retrieve the user's saved hobbies
 def get_user_hobbies(user_id):
-    user = User.query.get_or_404(user_id)
-    hobbies = user.hobbies 
-    return jsonify([{ # create a list
-        'id': hobby.hobby_id,
-        'name': hobby.hobby_name,
-    }for hobby in hobbies])
+    user_hobbies = db.session.query(Hobby).join(SavedHobby).filter(SavedHobby.user_id == user_id).all()
+    user_hobbies_list = [{'id': hobby.hobby_id, 'name': hobby.hobby_name} for hobby in user_hobbies]
+    return jsonify(user_hobbies_list)
+    #user = User.query.get_or_404(user_id)
+    #hobbies = user.hobbies 
+    #return jsonify([{ # create a list
+        #'id': hobby.hobby_id,
+        #'name': hobby.hobby_name,
+    #}for hobby in hobbies])
 
 @app.route('/users/<int:user_id>/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the user's saved hobbies
 def delete_user_hobbies(user_id, hobby_id):
-    saved_hobby = SavedHobby.query.filter_by(user_id = user_id, hobby_id = hobby_id).first() # find first instance from query
-    db.session.delete(saved_hobby)
+    saved_hobbies = SavedHobby.query.filter_by(user_id = user_id, hobby_id = hobby_id).first() # find first instance from query
+    db.session.delete(saved_hobbies)
     db.session.commit()
     return jsonify({'message': 'Deleted Hobby From User'})
 
-
+# get hobbies 
+@app.route('/hobbies/<hobby_name>', methods=['GET'])
+def get_hobby_by_name(hobby_name):
+    hobby = Hobby.query.filter_by(hobby_name=hobby_name).first()
+    if hobby:
+        return jsonify({'hobby_id': hobby.hobby_id})
+    else:
+        return jsonify({'error': 'Hobby not found'}), 404
 
 # Login for user
 @app.route('/login', methods=['POST'])

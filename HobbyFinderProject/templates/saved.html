@@ -60,6 +60,7 @@
                 if (hobbies.length === 0) {
                     let li = document.createElement("li");
                     li.textContent = "No hobbies saved";
+                    li.classList.add("no-hobbies")
                     hobbyList.appendChild(li);
                     return;
                 }

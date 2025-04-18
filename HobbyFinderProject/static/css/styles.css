@@ -452,6 +452,14 @@ a:hover{
     gap: 10px;
 }
 /* 
+    when no hobbies are saved
+    centers text b/c there is no unsave/delete button
+*/
+#saved-list li.no-hobbies {
+    justify-content: center;
+    text-align: center;
+}
+/* 
     remove button
 */
 #saved-list li button {

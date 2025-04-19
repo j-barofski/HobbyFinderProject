@@ -86,43 +86,54 @@
             }
         })
 
-        async function saveHobby(hobby) {
-            // Store hobbies to local storage. If no hobbies saved, create an array
-            // local storage is still only temporary
-            let savedHobbies = JSON.parse(localStorage.getItem("savedHobbies")) || [];
+        async function saveHobby(hobbyName) {
+            const user = JSON.parse(localStorage.getItem("user"));           
+            const userID = user ? user.user_id : null;
+            
+            // if user id does not exist
+            if (!userID) {
+                alert("User ID not found. Please log in.");
+                return; // Exit the function early if no user ID
+              }
 
-            // Check if hobby is saved
-            if(!savedHobbies.includes(hobby)) { // Adds to local storage
-                savedHobbies.push(hobby);
-                localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
+            try {
+                const savedResponse = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`);
+                const savedHobbies = await savedResponse.json();
 
-                // send to backend
-                const userID = localStorage.getItem("user_id"); 
-
-                const response = await fetch('http://127.0.0.1:5050/hobbies/${hobby}');
-                const hobbyData = await response.json();
-
-                if (hobbyData && hobbyData.hobby_id) {
-                    const hobbyID = hobbyData.hobby_id;
-
-                    const saveResponse = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ hobby_id: hobbyID }) // go to server
-                    });
-                }
-   
-
-                if (response.ok) {
-                    alert(hobby + " saved");
-                } else {
-                    alert(hobby + " failed to save");
+                const alreadySaved = savedHobbies.some(h => h.name.toLowerCase() === hobbyName.toLowerCase());
+                // check if hobby already saved
+                if (alreadySaved) {
+                    alert(`${hobbyName} is already saved`);
+                    return;
                 }
                 
-            } else {
-                alert(hobby + " is already saved"); 
+                // get the hobby id
+                const hobbyResponse = await fetch(`http://127.0.0.1:5050/hobbies/${hobbyName}`);
+                const hobbyData = await hobbyResponse.json();
+
+
+                if (!hobbyData || !hobbyData.hobby_id) {
+                    alert(`${hobbyName} not found`);
+                }
+
+                const saveResponse = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ hobby_id: hobbyData.hobby_id }) // go to server
+                });
+
+                if (saveResponse.ok) {
+                    alert(`${hobbyName} saved`);
+                } else {
+                    alert(`${hobbyName} failed to save`);
+                }
+
+                
+            } catch (error) {
+                console.error("Error saving hobby:", error);
+                alert("Could not save hobby"); 
             } 
         }
 

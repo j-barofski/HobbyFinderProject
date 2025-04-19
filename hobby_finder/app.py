@@ -64,50 +64,70 @@ def get_hobbies():
     } for h in hobbies])
 
 
-# CRUD FUNCTIONALITES FOR SAVED HOBBIESabc
+# CRUD FUNCTIONALITES FOR SAVED HOBBIES
 @app.route('/users/<int:user_id>/hobbies', methods=['POST']) # Save a hobby to a user
 def save_hobbies(user_id):
-    data = request.json
-    hobby = Hobby.query.get_or_404(data['hobby_id'])
+    try:
+        if user_id is None:
+            return jsonify({"error": "User ID is missing"}), 400
+ 
+        data = request.json
+        print(f"Received data: {data}") 
+        
+        hobby_id = data.get('hobby_id')
 
-    # Add to user_hobbies table
-    saved_hobbies = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
+        hobby = Hobby.query.get_or_404(hobby_id)
 
-    # if hobby already saved
-    already_saved = SavedHobby.query.filter_by(user_id=user_id, hobby_id=hobby.hobby_id).first()
-    if already_saved:
-        return jsonify({'message': 'Hobby already saved'}), 409
+        # Ensure the hobby exists in the hobbies table
+        if not hobby:
+            return jsonify({'message': 'Hobby not found'}), 404 
+        
+        # if hobby already saved
+        already_saved = SavedHobby.query.filter_by(user_id=user_id, hobby_id=hobby.hobby_id).first()
+        if already_saved:
+            return jsonify({'message': 'Hobby already saved'}), 400
+        
+        # Add to user_hobbies table
+        saved_hobbies = SavedHobby(user_id = user_id, hobby_id = hobby.hobby_id)
 
-    db.session.add(saved_hobbies)
-    db.session.commit()
-    return jsonify({'message': 'Saved Hobby to User'}), 201
+        db.session.add(saved_hobbies)
+        db.session.commit()
 
+        print(f"Hobby {hobby.hobby_name} saved for user {user_id}")
+        
+        return jsonify({'message': 'Saved Hobby to User'}), 201
+    
+    except Exception as e:
+        print(f"Error saving hobby: {e}")
+        return jsonify({'message': 'Internal server error'}), 500
 
 @app.route('/users/<int:user_id>/hobbies', methods=['GET']) # Retrieve the user's saved hobbies
 def get_user_hobbies(user_id):
-    user_hobbies = db.session.query(Hobby).join(SavedHobby).filter(SavedHobby.user_id == user_id).all()
-    user_hobbies_list = [{'id': hobby.hobby_id, 'name': hobby.hobby_name} for hobby in user_hobbies]
-    return jsonify(user_hobbies_list)
-    #user = User.query.get_or_404(user_id)
-    #hobbies = user.hobbies 
-    #return jsonify([{ # create a list
-        #'id': hobby.hobby_id,
-        #'name': hobby.hobby_name,
-    #}for hobby in hobbies])
+    saved_hobbies = db.session.query(Hobby).join(SavedHobby).filter(SavedHobby.user_id == user_id).all()
+    print(f"User hobbies for {user_id}: {saved_hobbies}")
+    saved_hobbies_list = [{'id': hobby.hobby_id, 'name': hobby.hobby_name} for hobby in saved_hobbies]
+    return jsonify(saved_hobbies_list)
+
 
 @app.route('/users/<int:user_id>/hobbies/<int:hobby_id>', methods=['DELETE']) # Delete the user's saved hobbies
 def delete_user_hobbies(user_id, hobby_id):
     saved_hobbies = SavedHobby.query.filter_by(user_id = user_id, hobby_id = hobby_id).first() # find first instance from query
-    db.session.delete(saved_hobbies)
-    db.session.commit()
-    return jsonify({'message': 'Deleted Hobby From User'})
+    if saved_hobbies:
+        db.session.delete(saved_hobbies)
+        db.session.commit()
+        return jsonify({'message': 'Deleted Hobby From User'}), 200
+    else: 
+        return jsonify({'message': 'Hobby not found'}), 404
 
-# get hobbies 
+# get hobby names
 @app.route('/hobbies/<hobby_name>', methods=['GET'])
 def get_hobby_by_name(hobby_name):
     hobby = Hobby.query.filter_by(hobby_name=hobby_name).first()
     if hobby:
-        return jsonify({'hobby_id': hobby.hobby_id})
+        return jsonify({
+            "hobby_id": hobby.hobby_id,
+            "name": hobby.hobby_name
+        })
     else:
         return jsonify({'error': 'Hobby not found'}), 404
 

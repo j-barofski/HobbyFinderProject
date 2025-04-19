@@ -56,11 +56,14 @@
                 const response = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies`);
                 const hobbies = await response.json();
 
+                console.log("Fetched hobbies:", hobbies);
+                console.log("hobbyList:", hobbyList);
+
                 // if no hobbies saved
                 if (hobbies.length === 0) {
                     let li = document.createElement("li");
                     li.textContent = "No hobbies saved";
-                    li.classList.add("no-hobbies")
+                    li.classList.add("no-hobbies");
                     hobbyList.appendChild(li);
                     return;
                 }
@@ -73,7 +76,7 @@
                     // Remove a hobby
                     let removeBtn = document.createElement("button");
                     removeBtn.textContent = "Remove";
-                    removeBtn.addEventListener("click", () => removeHobby(userID, hobby.id, li));
+                    removeBtn.addEventListener("click", () => removeHobby(hobby));
 
                     li.appendChild(removeBtn);
                     hobbyList.appendChild(li);
@@ -84,16 +87,41 @@
                 hobbyList.innerHTML = "<li>Cannot load hobbies at this time.</li>"
             }
         }
-        // Remove hobbies
-        async function removeHobby(userID, hobbyID, hobbyListItem) {
-            const response = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies/${hobbyID}`, {
-                method: "DELETE"
-            });
-            if (response.ok) {
-                hobbyListItem.remove();
-                alert("Removed Hobby"); // hobby successfully removed
-            } else {
-                alert("Could not remove hobby"); // hobby unsuccessfully removed
+
+        // remove hobbies
+        async function removeHobby(hobby) {
+            // send to backend
+            const user = JSON.parse(localStorage.getItem("user"));
+            const userID = user ? user.user_id : null;
+
+            // if user id does not exist
+            if (!userID) {
+                alert("User ID not found. Please log in.");
+                return; 
+            }
+
+            console.log("User ID:", userID);
+
+            const response = await fetch(`http://127.0.0.1:5050/hobbies/${hobby.name}`);
+            const hobbyData = await response.json();
+
+            if (hobbyData && hobbyData.hobby_id) {
+                const hobbyID = hobbyData.hobby_id;
+
+                const deleteResponse = await fetch(`http://127.0.0.1:5050/users/${userID}/hobbies/${hobbyID}`, {
+                    method: "DELETE",
+                });
+
+                if (deleteResponse.ok) {
+                    alert(`${hobby.name} removed`);
+                    // update local storage
+                    let savedHobbies = JSON.parse(localStorage.getItem("savedHobbies")) || [];
+                    savedHobbies = savedHobbies.filter(h => h !== hobby);
+                    localStorage.setItem("savedHobbies", JSON.stringify(savedHobbies));
+                    await showSaved(); // refresh 
+                } else {
+                    alert(`${hobby.name} failed to remove`);
+                }
             }
         }
     </script>

@@ -15,7 +15,7 @@
         <a href="login.html">Log In</a>
     </nav>
     <!-- Sign Up Form -->
-    <form class="signup" action="/signup" method = "POST">
+    <form class="signup">
         <div class = "signup-header">
             <header>Sign Up</header>   
         </div>
@@ -34,30 +34,37 @@
         
         <!-- Sign Up Button -->
         <div class="input-submit">
-            <button type="submit" class="submit-btn" id="submit">Sign Up</button>
+            <button type="form" class="submit-btn" id="submit">Sign Up</button>
         </div>
     </form>
 
     <script>
-        const SignUpForm = document.querySelector(".signup");
-        const SignUpButton = document.getElementById("submit");
+        const signUpForm = document.querySelector("#signup-form");
+        //const signUpForm = document.querySelector(".signup");
+        //const signUpButton = document.getElementById("submit");
     
-        signUpButton.addEventListener("click", async (e) => { // e is mouse event when submit button is clicked
+        signUpForm.addEventListener("submit", async (e) => { // e is mouse event when submit button is clicked
             e.preventDefault(); // Prevent form submission, only want to validate it
 
             const fullname = document.getElementById("fullname").value.trim()
             const email = document.getElementById("signup-email").value.trim() // trim removes whitespace
             const password = document.getElementById("signup-password").value.trim()
 
-            try { // Send to backend
-                const response = await fetch("http://127.0.0.1:5050/signup", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ fullname, email, password }) // go to server
-                })
+            if (!fullname || !email || !password) {
+                alert("All fields are required.");
+                return;
+            }
 
+            const response = await fetch("http://127.0.0.1:5050/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ fullname, email, password }) // go to server
+            })
+
+            try { // Send to backend
+        
                 const result = await response.json();
 
                 if (response.ok) { // successful login
@@ -67,9 +74,12 @@
                     }));
 
                     alert("Sign up Successful");
-                    window.location.href = "dashboard.html"; // redirect to the dashboard
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 200); // redirect to the dashboard
                 } else {
-                    alert("Please fill out the form.")
+                    alert(result.message || "There was an error")
                 }
             } catch (error) { // for server issues
                 console.error("Unsuccessful Signup", error);

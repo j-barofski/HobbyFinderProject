@@ -15,7 +15,7 @@
         <a href="login.html">Log In</a>
     </nav>
     <!-- Sign Up Form -->
-    <form class="signup">
+    <form class="signup" novalidate onsubmit="return false;">
         <div class = "signup-header">
             <header>Sign Up</header>   
         </div>
@@ -34,56 +34,60 @@
         
         <!-- Sign Up Button -->
         <div class="input-submit">
-            <button type="form" class="submit-btn" id="submit">Sign Up</button>
+            <button type="submit" class="submit-btn" id="submit" >Sign Up</button>
         </div>
     </form>
 
-    <script>
-        const signUpForm = document.querySelector("#signup-form");
-        //const signUpForm = document.querySelector(".signup");
-        //const signUpButton = document.getElementById("submit");
-    
-        signUpForm.addEventListener("submit", async (e) => { // e is mouse event when submit button is clicked
-            e.preventDefault(); // Prevent form submission, only want to validate it
-
-            const fullname = document.getElementById("fullname").value.trim()
-            const email = document.getElementById("signup-email").value.trim() // trim removes whitespace
-            const password = document.getElementById("signup-password").value.trim()
-
-            if (!fullname || !email || !password) {
-                alert("All fields are required.");
-                return;
-            }
-
-            const response = await fetch("http://127.0.0.1:5050/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ fullname, email, password }) // go to server
-            })
-
-            try { // Send to backend
+    <script>  
         
-                const result = await response.json();
+        document.addEventListener('DOMContentLoaded', () => {
+            const signUpForm = document.querySelector(".signup");
 
-                if (response.ok) { // successful login
-                    localStorage.setItem("user", JSON.stringify({ // stored in localStorage
-                        email: email,
-                        user_id: result.user_id
-                    }));
+            signUpForm.addEventListener("submit", async (e) => { // e is mouse event when submit button is clicked
+                e.preventDefault(); // Prevent form submission, only want to validate it
+                
 
-                    alert("Sign up Successful");
+                const fullname = document.getElementById("fullname").value.trim()
+                const email = document.getElementById("signup-email").value.trim() // trim removes whitespace
+                const password = document.getElementById("signup-password").value.trim()
 
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 200); // redirect to the dashboard
-                } else {
-                    alert(result.message || "There was an error")
+                if (!fullname || !email || !password) {
+                    alert("Please fill out all the fields");
+                    return;
                 }
-            } catch (error) { // for server issues
-                console.error("Unsuccessful Signup", error);
-            }
+
+                console.log({ fullname, email, password });
+
+
+                try { // Send to backend
+                    const response = await fetch("http://127.0.0.1:5050/signup", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ fullname, email, password }) // go to server
+                    })
+                
+                    const result = await response.json();
+
+                    if (response.ok) { // successful signup
+                        console.log("Signup successful, storing user and redirecting...");
+                        localStorage.setItem("user", JSON.stringify({ // stored in localStorage
+                            email: email,
+                            user_id: result.user_id
+                        }));
+
+                        console.log("Sign up Successful");
+
+                        window.location.href = "login.html";  // redirect to the login page
+                    } else {
+                        alert(result.message || "There was an error")
+                    }
+                } catch (error) { // for server issues
+                    console.error("Unsuccessful Signup", error);
+                }
+                return false;
+            })
         })
     </script>
 </body>

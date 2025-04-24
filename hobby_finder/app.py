@@ -175,6 +175,29 @@ def signup():
         print("Error in /signup:", e)
         return jsonify({'message': 'Internal server error'}), 500
     
+# forgot password, resets for now
+@app.route('/forgot', methods=['POST'])
+def forgot_password():
+    try: 
+        if request.method == 'OPTIONS': # pre-flight request
+            return '', 200 # 200 and CORS header
+        
+        data = request.json
+        email = data.get('email')
+
+        if not email:
+            return jsonify({'message': 'Please enter your email'}), 400 # missing input
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            return jsonify({'message': 'Resetting password now'}), 200
+        else:
+            return jsonify({'message': 'Email not found'}), 404
+
+    except Exception as e:
+        print("Error in /forgot:", e)
+        return jsonify({'message': 'Internal server error'}), 500
 
 # Runs the app on port 5000
 if __name__ == '__main__':

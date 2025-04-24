@@ -15,7 +15,7 @@
         <a href="signup.html">Sign Up</a>
     </nav>
     <!-- Forgot Password Form -->
-    <form class="forgot-form" action="#" method = "post">
+    <form class="forgot-form">
         <div class = "forgot-header">
             <header>Forgot Password</header>   
         </div>
@@ -30,26 +30,36 @@
     </form>
 
     <script>
-        const ForgotForm = document.querySelector(".forgot-form");
-        const ForgotButton = document.getElementById("submit");
+        const forgotForm = document.querySelector(".forgot-form");
+        const forgotButton = document.getElementById("submit");
     
-        ForgotButton.addEventListener("click", (e) => { // e is mouse event when submit button is clicked
+        forgotButton.addEventListener("click", async (e) => { // e is mouse event when submit button is clicked
             e.preventDefault(); // Prevent form submission, only want to validate it
-
-            // using local storage to save data in web browser
-            // will be removed when SQL is created
-            const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
-            console.log("Stored User:", storedUser);
 
             const email = document.getElementById("forgot-email").value.trim() // trim removes whitespace
             
+            try {
             // If user exists and email matches
-            if (storedUser && storedUser.email === email) {
-                localStorage.removeItem("user"); // user info removed
-                alert("Your account has been reset.");
-                window.location.href = "signup.html"; // Redirects when successfully logged in
-            } else {
-                alert("Email not found. Please try again.")
+                const response = await fetch("http://127.0.0.1:5050/forgot", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email }) // go to server
+                })
+            
+                const result = await response.json();
+
+                if (response.ok) { // successful signup
+                    alert("Instructions to reset password sent to email. (Not available at this time)");
+                    window.location.href = "signup.html";
+                } else {
+                    alert(result.message || "Email could not be found right now");
+                };
+
+            } catch (error) {
+                console.log('Error:', error);
+                alert('Error resetting password');
             }
         })
     </script>
